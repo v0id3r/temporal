@@ -1660,6 +1660,14 @@ If value less or equal to 0, will fall back to HistoryPersistenceNamespaceMaxQPS
 		nil, // actual default is in service/history/configs package
 		`TimerProcessorSchedulerStandbyRoundRobinWeights is the priority round robin weights used by timer task scheduler for standby namespaces`,
 	)
+	HistoryRangeCompleteTasksTimeout = NewGlobalDurationSetting(
+		"history.rangeCompleteTasksTimeout",
+		5*time.Second,
+		`HistoryRangeCompleteTasksTimeout is the timeout for the range delete issued by a history queue
+when it advances its deletion high watermark. The default matches the regular queue IO timeout; raise it
+when the delete is known to take longer, e.g. after the deletion high watermark has lagged far behind
+and the range DELETE covers a large number of rows.`,
+	)
 	TimerProcessorUpdateAckInterval = NewGlobalDurationSetting(
 		"history.timerProcessorUpdateAckInterval",
 		30*time.Second,

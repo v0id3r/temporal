@@ -176,6 +176,7 @@ func (f *transferQueueFactory) CreateQueue(
 			MaxPollInterval:                     f.Config.TransferProcessorMaxPollInterval,
 			MaxPollIntervalJitterCoefficient:    f.Config.TransferProcessorMaxPollIntervalJitterCoefficient,
 			CheckpointInterval:                  f.Config.TransferProcessorUpdateAckInterval,
+			RangeCompleteTasksTimeout:           f.Config.RangeCompleteTasksTimeout,
 			CheckpointIntervalJitterCoefficient: f.Config.TransferProcessorUpdateAckIntervalJitterCoefficient,
 			MaxReaderCount:                      f.Config.TransferQueueMaxReaderCount,
 		},
