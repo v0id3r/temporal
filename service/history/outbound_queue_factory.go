@@ -272,6 +272,7 @@ func (f *outboundQueueFactory) CreateQueue(
 			MaxPollInterval:                     f.Config.OutboundProcessorMaxPollInterval,
 			MaxPollIntervalJitterCoefficient:    f.Config.OutboundProcessorMaxPollIntervalJitterCoefficient,
 			CheckpointInterval:                  f.Config.OutboundProcessorUpdateAckInterval,
+			RangeCompleteTasksTimeout:           f.Config.RangeCompleteTasksTimeout,
 			CheckpointIntervalJitterCoefficient: f.Config.OutboundProcessorUpdateAckIntervalJitterCoefficient,
 			MaxReaderCount:                      f.Config.OutboundQueueMaxReaderCount,
 		},

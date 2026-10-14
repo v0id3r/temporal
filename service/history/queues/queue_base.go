@@ -94,6 +94,8 @@ type (
 		CheckpointInterval                  dynamicconfig.DurationPropertyFn
 		CheckpointIntervalJitterCoefficient dynamicconfig.FloatPropertyFn
 		MaxReaderCount                      dynamicconfig.IntPropertyFn
+		// RangeCompleteTasksTimeout is optional; defaults to queueIOTimeout when nil.
+		RangeCompleteTasksTimeout dynamicconfig.DurationPropertyFn
 	}
 )
 
@@ -351,7 +353,17 @@ func (p *queueBase) rangeCompleteTasks(
 		newExclusiveDeletionHighWatermark.TaskID = 0
 	}
 
-	ctx, cancel := newQueueIOContext()
+	// Same budget as any other queue IO by default; history.rangeCompleteTasksTimeout
+	// can raise it when the range DELETE is known to take longer (e.g. after the
+	// deletion high watermark has lagged far behind and the range is large).
+	timeout := queueIOTimeout
+	if p.options.RangeCompleteTasksTimeout != nil {
+		if t := p.options.RangeCompleteTasksTimeout(); t > 0 {
+			timeout = t
+		}
+	}
+	ctx, cancel := context.WithTimeout(context.Background(), timeout)
+	ctx = headers.SetCallerInfo(ctx, headers.SystemBackgroundHighCallerInfo)
 	defer cancel()
 
 	start := p.timeSource.Now()
@@ -370,6 +382,7 @@ func (p *queueBase) rangeCompleteTasks(
 		tag.NewTimeTag("max-fire-time", newExclusiveDeletionHighWatermark.FireTime),
 		tag.NewInt64("max-task-id", newExclusiveDeletionHighWatermark.TaskID),
 		tag.NewDurationTag("elapsed", elapsed),
+		tag.NewDurationTag("timeout", timeout),
 	}
 	if err != nil {
 		p.logger.Error("range completing queue task failed", append(logTags, tag.Error(err))...)
