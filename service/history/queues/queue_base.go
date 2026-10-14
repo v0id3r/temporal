@@ -354,13 +354,25 @@ func (p *queueBase) rangeCompleteTasks(
 	ctx, cancel := newQueueIOContext()
 	defer cancel()
 
-	if err := p.shard.GetExecutionManager().RangeCompleteHistoryTasks(ctx, &persistence.RangeCompleteHistoryTasksRequest{
+	start := p.timeSource.Now()
+	err := p.shard.GetExecutionManager().RangeCompleteHistoryTasks(ctx, &persistence.RangeCompleteHistoryTasksRequest{
 		ShardID:             p.shard.GetShardID(),
 		TaskCategory:        p.category,
 		InclusiveMinTaskKey: oldExclusiveDeletionHighWatermark,
 		ExclusiveMaxTaskKey: newExclusiveDeletionHighWatermark,
-	}); err != nil {
-		p.logger.Error("Error range completing queue task", tag.Error(err))
+	})
+	elapsed := p.timeSource.Now().Sub(start)
+	logTags := []tag.Tag{
+		tag.NewInt32("shard-id", p.shard.GetShardID()),
+		tag.NewStringTag("category", p.category.Name()),
+		tag.NewTimeTag("min-fire-time", oldExclusiveDeletionHighWatermark.FireTime),
+		tag.NewInt64("min-task-id", oldExclusiveDeletionHighWatermark.TaskID),
+		tag.NewTimeTag("max-fire-time", newExclusiveDeletionHighWatermark.FireTime),
+		tag.NewInt64("max-task-id", newExclusiveDeletionHighWatermark.TaskID),
+		tag.NewDurationTag("elapsed", elapsed),
+	}
+	if err != nil {
+		p.logger.Error("range completing queue task failed", append(logTags, tag.Error(err))...)
 		return err
 	}
 	return nil
