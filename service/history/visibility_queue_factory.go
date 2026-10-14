@@ -158,6 +158,7 @@ func (f *visibilityQueueFactory) CreateQueue(
 			MaxPollInterval:                     f.Config.VisibilityProcessorMaxPollInterval,
 			MaxPollIntervalJitterCoefficient:    f.Config.VisibilityProcessorMaxPollIntervalJitterCoefficient,
 			CheckpointInterval:                  f.Config.VisibilityProcessorUpdateAckInterval,
+			RangeCompleteTasksTimeout:           f.Config.RangeCompleteTasksTimeout,
 			CheckpointIntervalJitterCoefficient: f.Config.VisibilityProcessorUpdateAckIntervalJitterCoefficient,
 			MaxReaderCount:                      f.Config.VisibilityQueueMaxReaderCount,
 			MoveGroupTaskCountBase:              f.Config.QueueMoveGroupTaskCountBase,
