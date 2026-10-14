@@ -196,6 +196,7 @@ func (f *timerQueueFactory) CreateQueue(
 			MaxPollInterval:                     f.Config.TimerProcessorMaxPollInterval,
 			MaxPollIntervalJitterCoefficient:    f.Config.TimerProcessorMaxPollIntervalJitterCoefficient,
 			CheckpointInterval:                  f.Config.TimerProcessorUpdateAckInterval,
+			RangeCompleteTasksTimeout:           f.Config.RangeCompleteTasksTimeout,
 			CheckpointIntervalJitterCoefficient: f.Config.TimerProcessorUpdateAckIntervalJitterCoefficient,
 			MaxReaderCount:                      f.Config.TimerQueueMaxReaderCount,
 			MoveGroupTaskCountBase:              f.Config.QueueMoveGroupTaskCountBase,

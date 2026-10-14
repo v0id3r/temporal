@@ -133,6 +133,7 @@ type Config struct {
 	TimerProcessorSchedulerActiveRoundRobinWeights   dynamicconfig.MapPropertyFnWithNamespaceFilter
 	TimerProcessorSchedulerStandbyRoundRobinWeights  dynamicconfig.MapPropertyFnWithNamespaceFilter
 	TimerProcessorUpdateAckInterval                  dynamicconfig.DurationPropertyFn
+	RangeCompleteTasksTimeout                        dynamicconfig.DurationPropertyFn
 	TimerProcessorUpdateAckIntervalJitterCoefficient dynamicconfig.FloatPropertyFn
 	TimerProcessorMaxPollRPS                         dynamicconfig.IntPropertyFn
 	TimerProcessorMaxPollHostRPS                     dynamicconfig.IntPropertyFn
@@ -541,6 +542,7 @@ func NewConfig(
 		TimerProcessorSchedulerActiveRoundRobinWeights:   dynamicconfig.TimerProcessorSchedulerActiveRoundRobinWeights.WithDefault(ConvertWeightsToDynamicConfigValue(DefaultActiveTaskPriorityWeight)).Get(dc),
 		TimerProcessorSchedulerStandbyRoundRobinWeights:  dynamicconfig.TimerProcessorSchedulerStandbyRoundRobinWeights.WithDefault(ConvertWeightsToDynamicConfigValue(DefaultStandbyTaskPriorityWeight)).Get(dc),
 		TimerProcessorUpdateAckInterval:                  dynamicconfig.TimerProcessorUpdateAckInterval.Get(dc),
+		RangeCompleteTasksTimeout:                        dynamicconfig.HistoryRangeCompleteTasksTimeout.Get(dc),
 		TimerProcessorUpdateAckIntervalJitterCoefficient: dynamicconfig.TimerProcessorUpdateAckIntervalJitterCoefficient.Get(dc),
 		TimerProcessorMaxPollRPS:                         dynamicconfig.TimerProcessorMaxPollRPS.Get(dc),
 		TimerProcessorMaxPollHostRPS:                     dynamicconfig.TimerProcessorMaxPollHostRPS.Get(dc),
