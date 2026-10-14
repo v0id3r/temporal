@@ -31,6 +31,9 @@ const (
 
 	queueIOTimeout = 5 * time.Second * debug.TimeoutMultiplier
 
+	// A successful range delete slower than the regular queue IO timeout is logged at Warn level.
+	slowRangeCompleteTasksThreshold = queueIOTimeout
+
 	// Force creating new slice every forceNewSliceDuration
 	// so that the last slice in the default reader won't grow
 	// infinitely.
@@ -387,6 +390,11 @@ func (p *queueBase) rangeCompleteTasks(
 	if err != nil {
 		p.logger.Error("range completing queue task failed", append(logTags, tag.Error(err))...)
 		return err
+	}
+	if elapsed > slowRangeCompleteTasksThreshold {
+		// The delete finished, but took longer than the regular queue IO timeout;
+		// with the default history.rangeCompleteTasksTimeout it would have failed.
+		p.logger.Warn("range completing queue task was slow", logTags...)
 	}
 	return nil
 }
